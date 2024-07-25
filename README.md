@@ -11,7 +11,12 @@ The Iterated Prisoner's Dilemma (IPD) is a classic scenario in game theory that 
 Game theory provides a framework for analyzing scenarios where the outcome is influenced by the actions of multiple agents, each with their own interests. It examines how different strategies can lead to successful interactions in repeated settings. Key qualities that contribute to effective strategies in game theory include being "Nice," which involves promoting initial cooperation; "Forgiving," which allows for the restoration of cooperation after conflict; "Retaliatory," which ensures fairness by responding to defection; and "Clear," which helps establish predictable and stable interactions. These principles are not only crucial for successful strategies in theoretical models but also resonate with real-life interactions. Being nice fosters goodwill, forgiveness maintains relationships, retaliation prevents exploitation, and clarity builds trust and predictability. Through the lens of game theory, these qualities illuminate the moral behaviors that underpin successful human relationships and interactions.
 
 
-![Game Theory]()](https://github.com/sidd2305/GameTheory/blob/main/goldy.mp4)
+
+
+https://github.com/user-attachments/assets/29466785-862b-4601-8a59-1c750ca14c6e
+
+
+
 
 ## Features
 
