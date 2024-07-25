@@ -1,4 +1,4 @@
-#What Game Theory Reveals About Life, The Universe, and Everything
+# What Game Theory Reveals About Life, The Universe, and Everything
 
 ## Overview
 
