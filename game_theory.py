@@ -1,7 +1,7 @@
 import streamlit as st
 import random
 import time
-import pyautogui
+# import pyautogui-enable to auto play bgm music
 # Define the strategies
 def TitForTat(arr1, arr2, index):
     if index == 0:
@@ -179,7 +179,7 @@ def play_user_vs_strategy(user_moves, strategy, rounds):
 # Streamlit app
 st.set_page_config(page_title="Game Theory", page_icon=":game_die:")
 st.write("The Classic Veritasium Music to get things in the Mood🎼")
-pyautogui.press('F4')#whatever key has play button in your keyboard
+# pyautogui.press('F4')#whatever key has play button in your keyboard enter that so pyautogui presses that for autoplay of bgm
 st.audio("bgm.mp3",loop=True,autoplay=True,start_time=0)
 # Sidebar for page navigation
 st.sidebar.title("Navigation")
