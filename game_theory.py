@@ -5,9 +5,9 @@ import time
 # Define the strategies
 def TitForTat(arr1, arr2, index):
     if index == 0:
-        arr1.append(1)
+        arr1.append(1)  # Cooperate on the first move
     else:
-        arr1.append(arr2[-1])
+        arr1.append(arr2[-2] if len(arr2) > 1 else 1)  # Copy the opponent's previous move, or cooperate if it's the second round
     return arr1
 
 def AlwaysCooperate(arr1, arr2, index):
@@ -120,54 +120,82 @@ def calculate_scores(arr1, arr2):
     return score1, score2
 
 def play_user_vs_strategy(user_moves, strategy, rounds):
-    user_arr = user_moves[:]
-    strategy_arr = []
-
+    # Initialize session state variables
+    if "user_arr" not in st.session_state:
+        st.session_state.user_arr = []
+    if "strategy_arr" not in st.session_state:
+        st.session_state.strategy_arr = []
+    if "round" not in st.session_state:
+        st.session_state.round = 0
     names = {TitForTat: "TitForTat", AlwaysCooperate: "AlwaysCooperate", AlwaysDefect: "AlwaysDefect",
              Friedman: "Friedman", Joss: "Joss", generous_tit_for_tat: "Generous TitForTat",
              tit_for_two_tats: "TitForTwoTats", tester_strategy: "Tester"}
 
-    if "round" not in st.session_state:
-        st.session_state.round = 0
-        st.session_state.strategy_arr = []
-        st.session_state.user_arr = user_arr
-
     current_round = st.session_state.round
+
+    
 
     if current_round < rounds:
         st.write(f"Round {current_round + 1}:")
 
         # User input for the current round
-        user_move = st.selectbox("Select your move", [1, 0], key=f"user_move_{current_round}")
-
+        user_move = st.selectbox(
+            f"Round {current_round + 1} Move",
+            ["Choose your option", "Cooperate", "Not Cooperate"],
+            key=f"user_move_{current_round}"
+        )
+        
         if st.button("Submit Move"):
-            st.session_state.user_arr[current_round] = user_move
-            strategy(st.session_state.strategy_arr, st.session_state.user_arr, current_round)
+            if user_move == "Choose your option":
+                st.warning("Please select a move!")
+            else:
+                # Convert user move to binary
+                user_move_binary = 1 if user_move == "Cooperate" else 0
+                
+                # Add user's move to the list
+                st.session_state.user_arr.append(user_move_binary)
 
-            # Get the latest move
-            strategy_move = st.session_state.strategy_arr[-1]
 
-            # Calculate scores
-            score_user, score_strategy = calculate_scores(st.session_state.user_arr[:current_round + 1], st.session_state.strategy_arr)
+                # Calculate strategy's move based on previous rounds
+                if current_round > 0:
+                    strategy(st.session_state.strategy_arr, st.session_state.user_arr[:-1], current_round - 1)
+                else:
+                    # For the first move, initialize strategy move
+                    strategy(st.session_state.strategy_arr, [], 0)
 
-            # Display moves and scores for the current round
-            st.write(f"User: {'Cooperate' if user_move == 1 else 'Not Cooperate'}")
-            st.write(f"Strategy ({names[strategy]}): {'Cooperate' if strategy_move == 1 else 'Not Cooperate'}")
-            st.write(f"Score for User: {score_user}")
-            st.write(f"Score for {names[strategy]}: {score_strategy}")
-            st.write("---")
+              
+                
 
-            # Increment the round counter
-            st.session_state.round += 1
+                # Get the latest move from the strategy
+                strategy_move = st.session_state.strategy_arr[-1]
 
-            time.sleep(2)  # Wait for 2 seconds before the next round
+                # Calculate scores
+                score_user, score_strategy = calculate_scores(st.session_state.user_arr, st.session_state.strategy_arr)
+
+                # Display moves and scores for the current round
+                
+                st.write(f"User: {user_move}")
+                st.write(f"Strategy: {'Cooperate' if strategy_move == 1 else 'Not Cooperate'}")
+                st.write(f"Score for User: {score_user}")
+                st.write(f"Score for Strategy: {score_strategy}")
+                st.write("---")
+
+                # Increment the round counter
+                st.session_state.round += 1
+
+      
+
+                # Clear the user move selection to prevent double submissions
+                st.session_state.user_move = None
+
+                time.sleep(2)  # Wait for 2 seconds before the next round
 
     if st.session_state.round == rounds:
         # Display final results
         final_score_user, final_score_strategy = calculate_scores(st.session_state.user_arr, st.session_state.strategy_arr)
         st.write(f"Final Score for User: {final_score_user}")
         st.write(f"Final Score for {names[strategy]}: {final_score_strategy}")
-
+        
         if final_score_user > final_score_strategy:
             st.write("User wins!")
         elif final_score_strategy > final_score_user:
@@ -176,10 +204,11 @@ def play_user_vs_strategy(user_moves, strategy, rounds):
             st.write("It's a tie!")
 
 
+
 # Streamlit app
 st.set_page_config(page_title="Game Theory", page_icon=":game_die:")
 st.write("The Classic Veritasium Music to get things in the Mood🎼")
-# pyautogui.press('F4')#whatever key has play button in your keyboard enter that so pyautogui presses that for autoplay of bgm
+#pyautogui.press('F4')#whatever key has play button in your keyboard enter that so pyautogui presses that for autoplay of bgm
 st.audio("bgm.mp3",loop=True,autoplay=True,start_time=0)
 # Sidebar for page navigation
 st.sidebar.title("Navigation")
@@ -260,7 +289,6 @@ elif page == "Simulation":
         else:
             st.write("It's a tie!")
 elif page == "Play Against Strategy":
-    # Play Against Strategy page
     st.title("Play Against a Strategy")
 
     strategy_options = {
@@ -290,6 +318,7 @@ elif page == "Play Against Strategy":
     if "strategy_score" not in st.session_state:
         st.session_state.strategy_score = 0
 
+
     if st.session_state.current_round < rounds:
         # User input for the current round
         user_move = st.selectbox(
@@ -305,8 +334,15 @@ elif page == "Play Against Strategy":
             # Add user's move to the list
             st.session_state.user_moves.append(user_move_binary)
             
+
+
             # Generate strategy's move
-            strategy(st.session_state.strategy_moves, st.session_state.user_moves, st.session_state.current_round)
+            if st.session_state.current_round > 0:
+                strategy(st.session_state.strategy_moves, st.session_state.user_moves, st.session_state.current_round)
+            else:
+                # For the first round, we pass an empty list as there are no previous moves
+                strategy(st.session_state.strategy_moves, [], 0)
+          
             
             # Get the latest move
             strategy_move = st.session_state.strategy_moves[-1]
@@ -333,6 +369,8 @@ elif page == "Play Against Strategy":
             
             # Increment the round counter
             st.session_state.current_round += 1
+
+
 
             time.sleep(2)  # Wait for 2 seconds before the next round
 
