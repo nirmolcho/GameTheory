@@ -145,7 +145,7 @@ def play_user_vs_strategy(user_moves, strategy, rounds):
             key=f"user_move_{current_round}"
         )
         
-        if st.button("Submit Move"):
+        if st.button("Submit Move/Click for Next Round"):
             if user_move == "Choose your option":
                 st.warning("Please select a move!")
             else:
